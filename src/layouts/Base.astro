@@ -74,13 +74,13 @@ const brandFont = `https://fonts.googleapis.com/css2?family=Black+Han+Sans&text=
 
     <script>
       // 스크롤하면 .reveal 요소를 부드럽게 보여 줍니다.
+      // 다시 위로 올라가 요소가 화면 아래로 빠지면 원래대로 돌려 두어, 내려올 때마다 다시 나타나게 합니다.
+      // (위쪽으로 지나간 요소는 그대로 두어서, 위로 스크롤할 때 깜빡이지 않게 합니다)
       const io = new IntersectionObserver(
         (entries) => {
           for (const entry of entries) {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('is-in');
-              io.unobserve(entry.target);
-            }
+            if (entry.isIntersecting) entry.target.classList.add('is-in');
+            else if (entry.boundingClientRect.top > 0) entry.target.classList.remove('is-in');
           }
         },
         { rootMargin: '0px 0px -8% 0px' },
