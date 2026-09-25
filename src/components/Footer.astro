@@ -4,6 +4,8 @@ import site from '../data/site.json';
 import { href } from '../lib/utils';
 
 const year = new Date().getFullYear();
+// 오류 제보 양식에 '어느 페이지에서 왔는지'를 자동으로 채워 줍니다.
+const here = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, ''), '') || '/';
 ---
 
 <footer class="site-footer darker">
@@ -49,7 +51,10 @@ const year = new Date().getFullYear();
 
     <div class="site-footer__bottom">
       <p>© {year} {site.name} {site.nameEn}. All rights reserved.</p>
-      <a href={href('/admin/')} class="site-footer__admin">관리자</a>
+      <p class="site-footer__links">
+        <a href={`${href('/report/')}?from=${encodeURIComponent(here)}`}>오류 제보</a>
+        <a href={href('/admin/')} class="site-footer__admin">관리자</a>
+      </p>
     </div>
   </div>
 </footer>
@@ -107,6 +112,11 @@ const year = new Date().getFullYear();
     padding-block: 28px;
     border-top: 1px solid var(--line-dark);
     font-size: 0.85rem;
+  }
+
+  .site-footer__links {
+    display: flex;
+    gap: 20px;
   }
 
   .site-footer__admin {

@@ -83,6 +83,26 @@ scripts/
      auth_methods: [oauth, token]
    ```
 
+## 오류 제보함
+
+- 홈페이지 맨 아래 **오류 제보** → `/report/` 양식. 제보자는 로그인할 필요가 없습니다.
+- 제보는 **비공개 저장소** [historychurch-reports](https://github.com/dhsrua555/historychurch-reports) 의 이슈로 들어옵니다.
+  (공개 저장소가 아니라서 제보자의 연락처는 관리자만 볼 수 있습니다.) 저장소 주인은 새 제보가 올 때마다 GitHub 알림 메일을 받습니다.
+- 처리가 끝나면 이슈를 **Close** 하면 됩니다. 유형별 라벨(화면이 이상해요 / 내용이 틀려요 / 영상·링크가 안 돼요 / 기타)로 걸러 볼 수 있습니다.
+- 동작 방식: 양식 → Cloudflare Worker(`workers/report`) → GitHub 이슈. 스팸 방지로 숨은 입력칸, 3초 미만 제출 차단, IP 당 1분 5건 제한, 허용된 사이트 주소에서 온 요청만 받습니다.
+- 워커 주소는 `src/lib/services.ts` 의 `REPORT_ENDPOINT` 에 넣습니다. 비어 있으면 양식 대신 전화·이메일 안내가 보입니다.
+- 워커의 `GITHUB_TOKEN` 은 **제보함 저장소의 Issues 쓰기 권한만** 가진 fine-grained 토큰이어야 하고, Cloudflare 대시보드에 **Secret(암호화)** 으로만 저장합니다.
+
+## Cloudflare Workers (로그인 서버 · 제보함)
+
+| 폴더 | 워커 이름 | 하는 일 | 대시보드에 넣는 Secret |
+| --- | --- | --- | --- |
+| `workers/cms-auth` | historychurch-cms-auth | 관리자 화면 'GitHub로 로그인' | `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` |
+| `workers/report` | historychurch-report | 오류 제보 → 비공개 저장소 이슈 | `GITHUB_TOKEN` |
+
+배포: 각 폴더에서 `npx wrangler deploy`. `keep_vars = true` 라서 다시 배포해도 대시보드에 넣은 값은 지워지지 않습니다.
+`workers/cms-auth` 는 [sveltia-cms-auth](https://github.com/sveltia/sveltia-cms-auth) (MIT) 를 그대로 가져온 것이니 고치지 말고, 새 버전이 나오면 `src/index.js` 만 바꿔 넣으세요.
+
 ## 설교 자동 업데이트
 
 - `sync-sermons.yml` 이 **매시간** 히스토리교회 유튜브 채널(RSS)을 확인합니다.

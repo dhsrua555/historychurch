@@ -11,11 +11,24 @@ import { href } from '../lib/utils';
       <a class="btn btn--light" href={href('/')}>홈으로<span class="btn__icon"><CrossMark class="" /></span></a>
       <a class="btn btn--ghost" href={href('/sermons/')}>설교 보기<span class="btn__icon"><CrossMark class="" /></span></a>
     </div>
+    <p class="report-note">링크를 눌렀는데 이 화면이 나왔다면 <a href={href('/report/')}>오류 제보</a>로 알려 주세요.</p>
   </PageHero>
 </Base>
 
 <style>
   .actions {
     margin-top: 40px;
+  }
+
+  .report-note {
+    margin-top: 32px;
+    color: var(--on-dark-2);
+    font-size: 0.95rem;
+  }
+
+  .report-note a {
+    color: var(--gold-soft);
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 </style>

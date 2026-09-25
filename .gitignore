@@ -17,3 +17,10 @@ npm-debug.log*
 .DS_Store
 Thumbs.db
 .idea/
+
+# 토큰·비밀번호 파일은 절대 올리지 않습니다
+*토큰*
+*token*.txt
+*secret*
+.dev.vars
+.wrangler/
