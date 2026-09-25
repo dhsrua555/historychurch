@@ -1,0 +1,55 @@
+---
+import CrossMark from './CrossMark.astro';
+
+interface Props {
+  label: string;
+  title: string;
+  lead?: string;
+}
+const { label, title, lead } = Astro.props;
+---
+
+<section class="page-hero dark">
+  <div class="page-hero__glow" aria-hidden="true"></div>
+  <div class="container page-hero__inner">
+    <p class="label"><CrossMark /> {label}</p>
+    <h1 class="h1" set:html={title} />
+    {lead && <p class="lead page-hero__lead">{lead}</p>}
+    <slot />
+  </div>
+</section>
+
+<style>
+  .page-hero {
+    position: relative;
+    overflow: hidden;
+    padding-top: calc(var(--header-h) + clamp(72px, 10vw, 150px));
+    padding-bottom: clamp(56px, 7vw, 100px);
+  }
+
+  .page-hero__glow {
+    position: absolute;
+    right: -10%;
+    top: -30%;
+    width: 60vw;
+    height: 60vw;
+    max-width: 900px;
+    max-height: 900px;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(254, 183, 8, 0.13), rgba(254, 183, 8, 0) 70%);
+    pointer-events: none;
+  }
+
+  .page-hero__inner {
+    position: relative;
+  }
+
+  .page-hero .label {
+    margin-bottom: 26px;
+  }
+
+  .page-hero__lead {
+    max-width: 38em;
+    margin-top: 28px;
+  }
+</style>

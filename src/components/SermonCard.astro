@@ -1,0 +1,54 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { dot, href, ytThumb } from '../lib/utils';
+
+interface Props {
+  sermon: CollectionEntry<'sermons'>;
+}
+const { sermon } = Astro.props;
+const { title, date, category, scripture, youtube } = sermon.data;
+---
+
+<a class="sermon-card" href={href(`/sermons/${sermon.id}/`)} data-category={category}>
+  <div class="media ratio-16x9">
+    <img src={ytThumb(youtube, 'hqdefault')} alt="" loading="lazy" decoding="async" width="480" height="360" />
+  </div>
+  <div class="sermon-card__meta">
+    <span class="tag">{category}</span>
+    <span class="num muted">{dot(date)}</span>
+  </div>
+  <h3 class="sermon-card__title">{title}</h3>
+  {scripture && <p class="sermon-card__scripture muted">{scripture}</p>}
+</a>
+
+<style>
+  .sermon-card {
+    display: block;
+  }
+
+  .sermon-card__meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 18px;
+    font-size: 0.88rem;
+  }
+
+  .sermon-card__title {
+    margin-top: 10px;
+    font-size: 1.2rem;
+    font-weight: 650;
+    line-height: 1.4;
+    letter-spacing: -0.03em;
+    transition: color 0.3s;
+  }
+
+  .sermon-card:hover .sermon-card__title {
+    color: var(--green-600);
+  }
+
+  .sermon-card__scripture {
+    margin-top: 4px;
+    font-size: 0.93rem;
+  }
+</style>

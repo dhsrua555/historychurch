@@ -1,0 +1,105 @@
+---
+// 처음에는 썸네일만 보여 주고, 누르면 그 자리에서 YouTube 영상이 재생됩니다. (페이지가 가벼워집니다)
+import { youtubeId, ytThumb } from '../lib/utils';
+
+interface Props {
+  id: string;
+  title: string;
+  eager?: boolean;
+}
+const { id: raw, title, eager = false } = Astro.props;
+const id = youtubeId(raw);
+---
+
+<div class="player media ratio-16x9" data-player={id}>
+  <button type="button" class="player__btn" aria-label={`영상 재생: ${title}`}>
+    <img
+      src={ytThumb(id)}
+      alt=""
+      loading={eager ? 'eager' : 'lazy'}
+      decoding="async"
+      width="1280"
+      height="720"
+      onerror={`this.onerror=null;this.src='${ytThumb(id, 'hqdefault')}'`}
+    />
+    <span class="player__play" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="26" height="26"><path fill="currentColor" d="M8 5.5v13l11-6.5z"></path></svg>
+    </span>
+  </button>
+</div>
+
+<style>
+  .player {
+    box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.45);
+  }
+
+  .player__btn {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .player__btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s var(--ease), filter 0.6s var(--ease);
+  }
+
+  .player__btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(19, 33, 29, 0) 50%, rgba(19, 33, 29, 0.45));
+  }
+
+  .player__play {
+    position: absolute;
+    z-index: 1;
+    left: 50%;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    width: clamp(64px, 8vw, 92px);
+    height: clamp(64px, 8vw, 92px);
+    margin: calc(clamp(64px, 8vw, 92px) / -2) 0 0 calc(clamp(64px, 8vw, 92px) / -2);
+    border-radius: 999px;
+    background: var(--gold);
+    color: var(--ink);
+    transition: transform 0.5s var(--ease);
+  }
+
+  .player__play svg {
+    margin-left: 3px;
+  }
+
+  .player__btn:hover img {
+    transform: scale(1.03);
+  }
+
+  .player__btn:hover .player__play {
+    transform: scale(1.08);
+  }
+
+  .player :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-player]').forEach((player) => {
+    player.querySelector('button')?.addEventListener('click', () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube-nocookie.com/embed/${player.dataset.player}?autoplay=1&rel=0&playsinline=1`;
+      iframe.title = player.querySelector('button')?.getAttribute('aria-label') ?? 'YouTube';
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      iframe.allowFullscreen = true;
+      player.replaceChildren(iframe);
+    });
+  });
+</script>

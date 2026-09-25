@@ -1,0 +1,126 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CrossMark from '../components/CrossMark.astro';
+import site from '../data/site.json';
+---
+
+<Base title="온라인 헌금" description="히스토리교회 온라인 헌금 안내">
+  <PageHero label="온라인 헌금 · Giving" title="감사로 드리는 예물" lead="온라인으로 헌금하실 수 있도록 계좌를 안내해 드립니다. 계좌번호를 누르면 복사됩니다." />
+
+  <section class="section paper">
+    <div class="container narrow">
+      <ul role="list" class="accounts">
+        {
+          site.giving.accounts.map((a) => (
+            <li class="account reveal">
+              <p class="label">
+                <CrossMark /> {a.label}
+              </p>
+              <button type="button" class="account__number num" data-copy={a.number.replace(/-/g, '')} aria-label={`${a.bank} ${a.number} 계좌번호 복사`}>
+                {a.number}
+              </button>
+              <p class="account__bank">
+                {a.bank} · 예금주 <strong>{a.holder}</strong>
+              </p>
+              <button type="button" class="btn btn--sm account__copy" data-copy={a.number.replace(/-/g, '')}>
+                <span data-copy-label>계좌번호 복사</span>
+                <span class="btn__icon">
+                  <CrossMark class="" />
+                </span>
+              </button>
+            </li>
+          ))
+        }
+      </ul>
+
+      {
+        site.giving.kakaopay && (
+          <div class="kakao reveal">
+            <div>
+              <p class="h3">카카오페이로 헌금하기</p>
+              <p class="muted">휴대폰에서 누르면 카카오페이 송금 화면으로 바로 연결됩니다.</p>
+            </div>
+            <a class="btn btn--gold" href={site.giving.kakaopay} target="_blank" rel="noopener">
+              카카오페이 열기
+              <span class="btn__icon">
+                <CrossMark class="" />
+              </span>
+            </a>
+          </div>
+        )
+      }
+
+      <p class="note muted">헌금과 관련해 궁금하신 점은 <a href={`tel:${site.phone}`} class="num">{site.phone}</a> 으로 문의해 주세요.</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .accounts {
+    display: grid;
+    gap: 20px;
+  }
+
+  .account {
+    display: grid;
+    justify-items: start;
+    gap: 6px;
+    padding: clamp(28px, 4vw, 48px);
+    border-radius: var(--radius);
+    background: var(--cream);
+  }
+
+  .account .label {
+    margin-bottom: 12px;
+  }
+
+  .account__number {
+    font-size: clamp(1.8rem, 4.6vw, 2.8rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    cursor: copy;
+  }
+
+  .account__bank {
+    color: var(--ink-2);
+  }
+
+  .account__copy {
+    margin-top: 18px;
+  }
+
+  .kakao {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 20px;
+    padding: clamp(28px, 4vw, 48px);
+    border-radius: var(--radius);
+    box-shadow: inset 0 0 0 1px var(--line-strong);
+  }
+
+  .note {
+    margin-top: 40px;
+    font-size: 0.93rem;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-copy]').forEach((el) => {
+    el.addEventListener('click', async () => {
+      const card = el.closest('.account')!;
+      const label = card.querySelector<HTMLElement>('[data-copy-label]')!;
+      try {
+        await navigator.clipboard.writeText(el.dataset.copy!);
+        label.textContent = '복사되었습니다 ✓';
+      } catch {
+        label.textContent = '길게 눌러 복사해 주세요';
+      }
+      setTimeout(() => (label.textContent = '계좌번호 복사'), 2200);
+    });
+  });
+</script>

@@ -1,0 +1,111 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import CrossMark from '../../components/CrossMark.astro';
+import { byDateDesc, dot, href } from '../../lib/utils';
+
+const albums = (await getCollection('albums')).sort(byDateDesc);
+const years = [...new Set(albums.map((a) => String(a.data.date.getUTCFullYear())))];
+---
+
+<Base title="교회 앨범" description="히스토리교회가 함께한 시간들">
+  <PageHero label="교회 앨범 · Album" title="함께한 시간들" lead="예배와 교제, 수련회와 교회학교까지 — 하나님께서 써 가시는 히스토리교회의 이야기를 사진으로 남깁니다." />
+
+  <section class="section paper">
+    <div class="container" data-filter-list data-page="12">
+      {
+        years.length > 1 && (
+          <div class="tabs" role="group" aria-label="연도">
+            <button type="button" aria-pressed="true" data-filter="all">
+              전체
+            </button>
+            {years.map((y) => (
+              <button type="button" aria-pressed="false" data-filter={y}>
+                {y}
+              </button>
+            ))}
+          </div>
+        )
+      }
+
+      <div class="album-grid">
+        {
+          albums.map((a) => (
+            <a class="album-card" href={href(`/album/${a.id}/`)} data-category={String(a.data.date.getUTCFullYear())}>
+              <span class="media ratio-4x3">
+                <img src={href(a.data.cover || a.data.photos[0])} alt="" loading="lazy" />
+                <span class="album-card__count num">{a.data.photos.length}</span>
+              </span>
+              <span class="album-card__title">{a.data.title}</span>
+              <span class="album-card__date num muted">{dot(a.data.date)}</span>
+            </a>
+          ))
+        }
+      </div>
+
+      <div class="more-wrap">
+        <button type="button" class="btn btn--ghost" data-more>더 보기<span class="btn__icon"><CrossMark class="" /></span></button>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .album-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(36px, 4vw, 56px) clamp(20px, 2.4vw, 32px);
+  }
+
+  .album-card {
+    display: grid;
+    gap: 4px;
+  }
+
+  .album-card .media {
+    margin-bottom: 14px;
+  }
+
+  .album-card__count {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(19, 33, 29, 0.72);
+    color: var(--on-dark);
+    font-size: 0.8rem;
+  }
+
+  .album-card__count::before {
+    content: '사진 ';
+  }
+
+  .album-card__title {
+    font-size: 1.15rem;
+    font-weight: 650;
+    letter-spacing: -0.025em;
+  }
+
+  .album-card__date {
+    font-size: 0.88rem;
+  }
+
+  @media (max-width: 960px) {
+    .album-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 520px) {
+    .album-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  import { setupFilterList } from '../../lib/filter-list';
+  document.querySelectorAll<HTMLElement>('[data-filter-list]').forEach(setupFilterList);
+</script>

@@ -1,0 +1,12 @@
+---
+// 버튼·라벨에 쓰는 가느다란 십자가 아이콘
+interface Props {
+  class?: string;
+  size?: number;
+}
+const { class: className = 'cross-mark', size } = Astro.props;
+---
+
+<svg class={className} width={size} height={size} viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+  <path d="M8 1v14M3 5.5h10"></path>
+</svg>

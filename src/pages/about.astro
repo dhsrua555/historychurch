@@ -1,0 +1,264 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CrossMark from '../components/CrossMark.astro';
+import site from '../data/site.json';
+import about from '../data/about.json';
+import { href } from '../lib/utils';
+
+const emphasize = (text: string) => text.replace(/‘([^’]+)’/g, '<em>‘$1’</em>');
+const paragraphs = about.pastor.greeting.split(/\n{2,}/);
+---
+
+<Base title="교회 소개" description={`${site.name}는 ${site.tagline}입니다. 교회 비전과 담임목사 인사말을 소개합니다.`}>
+  <PageHero label="교회 소개 · About" title={`말씀의 역사로<br />믿음의 역사를 쓰는 교회`} lead={about.denominationNote} />
+
+  <!-- 교회 비전 -->
+  <section class="section cream">
+    <div class="container">
+      <p class="label"><CrossMark /> 교회 비전</p>
+      <p class="statement about-statement reveal" set:html={emphasize(about.intro)} />
+
+      <ol role="list" class="vision-list">
+        {
+          about.visions.map((v, i) => (
+            <li class="vision-row reveal">
+              <span class="vision-row__num num">0{i + 1}</span>
+              <h2 class="h2 vision-row__title">{v.title}</h2>
+              <p class="vision-row__text muted">{v.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- 사역 비전 -->
+  <section class="section dark">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="label"><CrossMark /> 사역 비전</p>
+          <h2 class="h2">이런 교회가 되겠습니다</h2>
+        </div>
+      </div>
+      <ol role="list" class="ministries">
+        {
+          about.ministries.map((m, i) => (
+            <li class="ministry reveal" style={`--delay:${i * 0.06}s`}>
+              <span class="num ministry__num">0{i + 1}</span>
+              <h3 class="h3">{m.title}</h3>
+              <p class="muted">{m.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- 담임목사 인사말 -->
+  <section class="section paper" id="greeting">
+    <div class="container greeting">
+      <aside class="greeting__side">
+        <img src={href(about.pastor.photo)} alt={`${about.pastor.name} ${about.pastor.title}`} width="413" height="531" loading="lazy" />
+        <p class="greeting__name">{about.pastor.title} <strong>{about.pastor.name}</strong></p>
+        <ul role="list" class="greeting__bio">
+          {about.pastor.bio.map((b) => <li>{b}</li>)}
+        </ul>
+        <p class="greeting__contact muted">
+          <a href={`tel:${site.phone}`} class="num">{site.phone}</a><br />
+          <a href={`mailto:${site.email}`}>{site.email}</a>
+        </p>
+      </aside>
+
+      <div class="greeting__body">
+        <p class="label"><CrossMark /> 담임목사 인사말</p>
+        <h2 class="h2 greeting__title">이 ‘믿음의 역사’에<br />여러분을 초대합니다</h2>
+        <div class="prose prose--serif">
+          {paragraphs.map((p) => <p>{p}</p>)}
+        </div>
+        <p class="greeting__sign">— {about.pastor.signature}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section--tight cream">
+    <div class="container cta-row">
+      <p class="h3">예배 시간과 오시는 길을 확인해 보세요.</p>
+      <a class="btn" href={href('/worship/')}>예배 안내<span class="btn__icon"><CrossMark class="" /></span></a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .label {
+    margin-bottom: 28px;
+  }
+
+  .about-statement {
+    max-width: 24em;
+  }
+
+  .vision-list {
+    margin-top: clamp(56px, 8vw, 110px);
+    border-top: 1px solid var(--ink);
+  }
+
+  .vision-row {
+    display: grid;
+    grid-template-columns: 5rem minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: 24px 40px;
+    align-items: baseline;
+    padding: clamp(28px, 4vw, 48px) 0;
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  .vision-row__num {
+    font-weight: 600;
+    color: var(--green-600);
+  }
+
+  .vision-row__title {
+    font-size: clamp(1.4rem, 2.4vw, 2.1rem);
+  }
+
+  .vision-row__text {
+    line-height: 1.85;
+  }
+
+  @media (max-width: 860px) {
+    .vision-row {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+  }
+
+  .ministries {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    border-top: 1px solid var(--line-dark);
+  }
+
+  .ministry {
+    display: grid;
+    align-content: start;
+    gap: 12px;
+    padding: 28px 24px 8px 0;
+  }
+
+  .ministry + .ministry {
+    padding-left: 24px;
+    border-left: 1px solid var(--line-dark);
+  }
+
+  .ministry__num {
+    color: var(--gold-soft);
+    font-size: 0.85rem;
+    margin-bottom: 32px;
+  }
+
+  .ministry p {
+    font-size: 0.95rem;
+    line-height: 1.8;
+  }
+
+  @media (max-width: 1080px) {
+    .ministries {
+      grid-template-columns: 1fr;
+    }
+
+    .ministry,
+    .ministry + .ministry {
+      grid-template-columns: 3rem 1fr;
+      padding: 22px 0;
+      border-left: 0;
+      border-bottom: 1px solid var(--line-dark);
+    }
+
+    .ministry__num {
+      margin: 0;
+      grid-row: span 2;
+    }
+  }
+
+  .greeting {
+    display: grid;
+    grid-template-columns: minmax(220px, 320px) minmax(0, 1fr);
+    gap: clamp(40px, 7vw, 120px);
+    align-items: start;
+  }
+
+  .greeting__side {
+    position: sticky;
+    top: calc(var(--header-h) + 24px);
+  }
+
+  .greeting__side img {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: var(--radius);
+  }
+
+  .greeting__name {
+    margin-top: 20px;
+    font-size: 1.1rem;
+  }
+
+  .greeting__bio {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    font-size: 0.9rem;
+    line-height: 1.9;
+    color: var(--ink-2);
+  }
+
+  .greeting__contact {
+    margin-top: 14px;
+    font-size: 0.9rem;
+  }
+
+  .greeting__body {
+    max-width: 680px;
+  }
+
+  .greeting__title {
+    margin-bottom: 40px;
+  }
+
+  .greeting__sign {
+    margin-top: 40px;
+    font-weight: 600;
+  }
+
+  @media (max-width: 860px) {
+    .greeting {
+      grid-template-columns: 1fr;
+    }
+
+    .greeting__side {
+      position: static;
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 0 20px;
+      align-items: start;
+    }
+
+    .greeting__side img {
+      grid-row: span 3;
+    }
+
+    .greeting__name {
+      margin-top: 0;
+    }
+  }
+
+  .cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+</style>

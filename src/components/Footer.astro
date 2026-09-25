@@ -1,0 +1,125 @@
+---
+import Logo from './Logo.astro';
+import site from '../data/site.json';
+import { href } from '../lib/utils';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer darker">
+  <div class="container">
+    <div class="site-footer__top">
+      <div class="site-footer__brand">
+        <Logo tone="light" />
+        <p class="site-footer__tagline">{site.denomination} · {site.tagline}</p>
+      </div>
+
+      <div class="site-footer__cols">
+        <div>
+          <p class="site-footer__title">오시는 길</p>
+          <p>{site.address}</p>
+          <p><a href={href('/worship/#location')}>지도 보기</a></p>
+        </div>
+        <div>
+          <p class="site-footer__title">연락처</p>
+          <p><a href={`tel:${site.phone}`} class="num">{site.phone}</a></p>
+          <p><a href={`mailto:${site.email}`}>{site.email}</a></p>
+        </div>
+        <div>
+          <p class="site-footer__title">바로가기</p>
+          <ul role="list">
+            <li><a href={href('/about/')}>교회 소개</a></li>
+            <li><a href={href('/worship/')}>예배 안내</a></li>
+            <li><a href={href('/sermons/')}>설교</a></li>
+            <li><a href={href('/news/')}>교회 소식</a></li>
+            <li><a href={href('/album/')}>앨범</a></li>
+            <li><a href={href('/give/')}>온라인 헌금</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="site-footer__title">함께해요</p>
+          <ul role="list">
+            <li><a href={site.links.youtube} target="_blank" rel="noopener">유튜브</a></li>
+            <li><a href={site.links.blog} target="_blank" rel="noopener">네이버 블로그</a></li>
+            <li><a href={site.links.onlineChurch} target="_blank" rel="noopener">온라인 교회</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="site-footer__bottom">
+      <p>© {year} {site.name} {site.nameEn}. All rights reserved.</p>
+      <a href={href('/admin/')} class="site-footer__admin">관리자</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding-top: clamp(64px, 8vw, 110px);
+    font-size: 0.95rem;
+    color: var(--on-dark-2);
+  }
+
+  .site-footer a {
+    transition: color 0.3s;
+  }
+
+  .site-footer a:hover {
+    color: var(--gold-soft);
+  }
+
+  .site-footer__top {
+    display: grid;
+    grid-template-columns: minmax(260px, 1fr) 2.2fr;
+    gap: 56px;
+    padding-bottom: 64px;
+  }
+
+  .site-footer__tagline {
+    margin-top: 20px;
+    max-width: 22em;
+  }
+
+  .site-footer__cols {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 32px;
+  }
+
+  .site-footer__title {
+    margin-bottom: 14px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: var(--gold-soft);
+  }
+
+  .site-footer ul {
+    display: grid;
+    gap: 4px;
+  }
+
+  .site-footer__bottom {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding-block: 28px;
+    border-top: 1px solid var(--line-dark);
+    font-size: 0.85rem;
+  }
+
+  .site-footer__admin {
+    opacity: 0.6;
+  }
+
+  @media (max-width: 960px) {
+    .site-footer__top {
+      grid-template-columns: 1fr;
+    }
+
+    .site-footer__cols {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

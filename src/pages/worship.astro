@@ -1,0 +1,199 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CrossMark from '../components/CrossMark.astro';
+import site from '../data/site.json';
+import { href } from '../lib/utils';
+
+const mapSrc = `https://maps.google.com/maps?q=${encodeURIComponent(site.address)}&z=17&output=embed`;
+---
+
+<Base title="예배 안내 · 오시는 길" description={`${site.name} 예배 시간과 오시는 길 — ${site.address}`}>
+  <PageHero label="예배 안내 · Worship" title="함께 예배해요" lead="처음이라 어색하셔도 괜찮습니다. 편하게 오셔서 함께 예배해 주세요. 궁금한 점은 언제든 연락 주시면 반갑게 안내해 드리겠습니다." />
+
+  <section class="section paper">
+    <div class="container">
+      <p class="label"><CrossMark /> 예배 시간</p>
+      <div class="service-table">
+        <div class="service-table__head" aria-hidden="true">
+          <span>예배</span><span>시간</span><span>장소</span>
+        </div>
+        <ul role="list">
+          {
+            site.services.map((s) => (
+              <li class="service-table__row reveal">
+                <span class="service-table__name">{s.name}</span>
+                <span class="service-table__time num">{s.time}</span>
+                <span class="service-table__place muted">{s.place}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="online reveal">
+        <div>
+          <p class="h3">예배에 직접 오기 어려우신가요?</p>
+          <p class="muted">주일예배와 수요 · 금요 예배는 유튜브로 함께하실 수 있습니다.</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn" href={href('/sermons/')}>설교 영상 보기<span class="btn__icon"><CrossMark class="" /></span></a>
+          <a class="btn btn--ghost" href={site.links.onlineChurch} target="_blank" rel="noopener">온라인 교회<span class="btn__icon"><CrossMark class="" /></span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section cream" id="location">
+    <div class="container location">
+      <div class="location__info">
+        <p class="label"><CrossMark /> 오시는 길</p>
+        <h2 class="h2">{site.address}</h2>
+        <dl class="location__list">
+          <div><dt>교회</dt><dd>{site.denomination} {site.name}</dd></div>
+          <div><dt>전화</dt><dd><a href={`tel:${site.phone}`} class="num">{site.phone}</a></dd></div>
+          <div><dt>이메일</dt><dd><a href={`mailto:${site.email}`}>{site.email}</a></dd></div>
+        </dl>
+        <div class="btn-row">
+          <a class="btn btn--gold" href={site.links.naverMap} target="_blank" rel="noopener">네이버 지도로 길찾기<span class="btn__icon"><CrossMark class="" /></span></a>
+          <a class="btn btn--ghost" href={site.links.kakaoMap} target="_blank" rel="noopener">카카오맵<span class="btn__icon"><CrossMark class="" /></span></a>
+        </div>
+      </div>
+      <div class="location__map media">
+        <iframe src={mapSrc} title="히스토리교회 위치 지도" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <section class="section dark">
+    <div class="container narrow first-visit">
+      <p class="label"><CrossMark /> 처음 오시는 분께</p>
+      <p class="statement">히스토리교회는 누구에게나 열려 있습니다. 신앙이 처음이신 분도, 오랜만에 교회를 찾으시는 분도 <em>있는 모습 그대로</em> 오세요.</p>
+      <p class="lead">예배 후 궁금한 점이 있으시면 담임목사님께 편하게 말씀해 주세요. 전화나 이메일로 미리 연락 주셔도 좋습니다.</p>
+      <div class="btn-row">
+        <a class="btn btn--light" href={`tel:${site.phone}`}>전화로 문의하기<span class="btn__icon"><CrossMark class="" /></span></a>
+        <a class="btn btn--ghost" href={href('/about/')}>교회 소개 보기<span class="btn__icon"><CrossMark class="" /></span></a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .label {
+    margin-bottom: 28px;
+  }
+
+  .service-table {
+    border-top: 1px solid var(--ink);
+  }
+
+  .service-table__head,
+  .service-table__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 0.5fr);
+    gap: 16px;
+    align-items: baseline;
+  }
+
+  .service-table__head {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+
+  .service-table__row {
+    padding: clamp(20px, 2.6vw, 32px) 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .service-table__name {
+    font-size: clamp(1.2rem, 2vw, 1.7rem);
+    font-weight: 650;
+    letter-spacing: -0.03em;
+  }
+
+  .service-table__time {
+    font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+  }
+
+  @media (max-width: 720px) {
+    .service-table__head {
+      display: none;
+    }
+
+    .service-table__row {
+      grid-template-columns: 1fr auto;
+    }
+
+    .service-table__place {
+      display: none;
+    }
+  }
+
+  .online {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-top: clamp(48px, 6vw, 80px);
+    padding: clamp(28px, 3.4vw, 44px);
+    border-radius: var(--radius);
+    background: var(--cream);
+  }
+
+  .location {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: clamp(32px, 5vw, 80px);
+    align-items: center;
+  }
+
+  .location__list {
+    display: grid;
+    gap: 10px;
+    margin: 32px 0;
+    padding-block: 24px;
+    border-block: 1px solid var(--line-strong);
+  }
+
+  .location__list div {
+    display: flex;
+    gap: 20px;
+  }
+
+  .location__list dt {
+    width: 4em;
+    flex: none;
+    color: var(--muted);
+  }
+
+  .location__map {
+    aspect-ratio: 4 / 3;
+    background: var(--paper);
+  }
+
+  .location__map iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    filter: grayscale(0.35) contrast(1.02);
+  }
+
+  @media (max-width: 960px) {
+    .location {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .first-visit .statement {
+    margin-bottom: 28px;
+  }
+
+  .first-visit .lead {
+    margin-bottom: 40px;
+  }
+</style>

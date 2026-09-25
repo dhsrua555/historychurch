@@ -1,0 +1,53 @@
+---
+import { LOGO_VIEWBOX, LOGO_BOOK, LOGO_CROSS } from '../lib/logo-paths';
+
+interface Props {
+  /** color: 원래 색 (밝은 배경) · light: 어두운 배경용 (책과 글자는 크림색, 십자가는 금색) */
+  tone?: 'color' | 'light';
+  wordmark?: boolean;
+  class?: string;
+}
+const { tone = 'color', wordmark = true, class: className = '' } = Astro.props;
+const book = tone === 'light' ? 'var(--on-dark)' : '#294743';
+---
+
+<span class:list={['logo', `logo--${tone}`, className]}>
+  <svg class="logo__mark" viewBox={LOGO_VIEWBOX} role="img" aria-label="히스토리교회 로고">
+    <path fill={book} fill-rule="evenodd" d={LOGO_BOOK}></path>
+    <path fill="#FEB708" d={LOGO_CROSS}></path>
+  </svg>
+  {
+    wordmark && (
+      <span class="logo__type">
+        <span class="logo__name">히스토리교회</span>
+      </span>
+    )
+  }
+</span>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    line-height: 1;
+  }
+
+  .logo__mark {
+    width: auto;
+    height: 38px;
+    flex: none;
+  }
+
+  .logo__name {
+    font-family: var(--brand);
+    font-size: 1.42rem;
+    letter-spacing: 0.01em;
+    color: #294743;
+    white-space: nowrap;
+  }
+
+  .logo--light .logo__name {
+    color: var(--on-dark);
+  }
+</style>

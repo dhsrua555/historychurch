@@ -1,0 +1,268 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
+#
+# 히스토리교회 관리자 화면(Sveltia CMS) 설정
+# - 사이트 주소/admin 으로 들어가면 글과 사진을 올릴 수 있습니다.
+# - 사진은 올릴 때 자동으로 WebP 로 줄여서 저장됩니다. (휴대폰 사진도 그대로 올리면 됩니다)
+
+app_title: 히스토리교회 관리자
+logo:
+  src: ../images/logo.svg
+site_url: https://dhsrua555.github.io/historychurch/
+
+backend:
+  name: github
+  repo: dhsrua555/historychurch
+  branch: main
+  # 지금은 'GitHub 토큰으로 로그인'만 켜 두었습니다.
+  # 'GitHub로 로그인' 버튼을 쓰려면 README 의 "관리자 로그인 설정"을 따라 base_url 을 넣고 oauth 를 추가하세요.
+  auth_methods: [token]
+  commit_messages:
+    create: '[{{collection}}] 새 글: {{slug}}'
+    update: '[{{collection}}] 수정: {{slug}}'
+    delete: '[{{collection}}] 삭제: {{slug}}'
+    uploadMedia: '사진 올림: {{path}}'
+    deleteMedia: '사진 삭제: {{path}}'
+
+media_folder: /public/uploads
+public_folder: /uploads
+
+media_libraries:
+  default:
+    config:
+      transformations:
+        raster_image:
+          format: webp
+          quality: 82
+          width: 2000
+          height: 2000
+
+slug:
+  encoding: ascii
+  clean_accents: true
+
+collections:
+  # ───────────────────────── 설교 ─────────────────────────
+  - name: sermons
+    label: 설교
+    label_singular: 설교
+    icon: play_circle
+    description: 유튜브에 올라온 주일·수요·금요 예배 영상은 몇 시간 안에 자동으로 추가됩니다. 제목이나 본문을 고치거나, 설교 요약을 덧붙일 때 쓰세요.
+    folder: /src/content/sermons
+    preview_path: 'sermons/{{filename}}/'
+    create: true
+    slug: '{{fields.date}}-{{uuid_shorter}}'
+    summary: '{{date}} · {{category}} · {{title}}'
+    sortable_fields:
+      fields: [date, title]
+      default: { field: date, direction: descending }
+    view_filters:
+      - { label: 주일예배, field: category, pattern: 주일예배 }
+      - { label: 수요예배, field: category, pattern: 수요예배 }
+      - { label: 금요기도회, field: category, pattern: 금요기도회 }
+    editor: { preview: false }
+    fields:
+      - { name: title, label: 설교 제목, widget: string }
+      - { name: date, label: 예배 날짜, widget: datetime, type: date, default: '{{now}}' }
+      - { name: category, label: 예배 종류, widget: select, options: [주일예배, 수요예배, 금요기도회, 특별예배], default: 주일예배 }
+      - { name: youtube, label: 유튜브 영상 주소, widget: string, hint: '유튜브 주소(https://youtu.be/… 또는 https://www.youtube.com/watch?v=…)를 그대로 붙여 넣으세요.' }
+      - { name: preacher, label: 설교자, widget: string, default: 김영훈 담임목사 }
+      - { name: scripture, label: 본문, widget: string, required: false, hint: '예) 잠언 20:5-12' }
+      - { name: series, label: 시리즈, widget: string, required: false, hint: '예) 잠언 (16)' }
+      - { name: passage, label: 본문 말씀, widget: text, required: false, hint: '한 줄에 한 절씩. 앞에 절 번호를 쓰면(예: "5 사람의 마음에…") 번호가 작게 표시됩니다.' }
+      - { name: summary, label: 한 줄 요약, widget: text, required: false }
+      - { name: body, label: 설교 노트, widget: markdown, required: false }
+
+  # ───────────────────────── 주보 ─────────────────────────
+  - name: bulletins
+    label: 주보
+    label_singular: 주보
+    icon: article
+    description: 매주 주보 이미지를 올려 주세요. 이미지 여러 장을 한 번에 끌어다 놓을 수 있습니다.
+    folder: /src/content/bulletins
+    preview_path: 'news/bulletins/{{filename}}/'
+    create: true
+    slug: '{{fields.date}}'
+    summary: '{{date}} · {{title}}'
+    sortable_fields:
+      fields: [date, title]
+      default: { field: date, direction: descending }
+    media_folder: '{{media_folder}}/bulletins'
+    public_folder: '{{public_folder}}/bulletins'
+    editor: { preview: false }
+    fields:
+      - { name: title, label: 제목, widget: string, hint: '예) 2026.09.27 주보' }
+      - { name: date, label: 주일 날짜, widget: datetime, type: date, default: '{{now}}' }
+      - { name: images, label: 주보 이미지, widget: image, multiple: true, hint: '앞면·뒷면 이미지를 끌어다 놓으세요. 순서는 드래그해서 바꿀 수 있습니다.' }
+      - { name: file, label: 첨부파일 (선택), widget: file, required: false, hint: 'PDF 등 내려받을 파일이 있으면 올려 주세요.' }
+      - { name: body, label: 메모 (선택), widget: markdown, required: false }
+
+  # ───────────────────────── 목회서신 ─────────────────────────
+  - name: columns
+    label: 목회서신
+    label_singular: 목회서신
+    icon: edit_note
+    description: 담임목사님의 목회서신(칼럼)입니다. 글을 붙여 넣고 저장하면 1~2분 뒤 홈페이지에 올라갑니다.
+    folder: /src/content/columns
+    preview_path: 'news/columns/{{filename}}/'
+    create: true
+    slug: '{{fields.date}}'
+    summary: '{{date}} · {{title}}'
+    sortable_fields:
+      fields: [date, title]
+      default: { field: date, direction: descending }
+    media_folder: '{{media_folder}}/columns'
+    public_folder: '{{public_folder}}/columns'
+    editor: { preview: false }
+    fields:
+      - { name: title, label: 제목, widget: string }
+      - { name: date, label: 날짜, widget: datetime, type: date, default: '{{now}}' }
+      - { name: author, label: 글쓴이, widget: string, default: 김영훈 담임목사 }
+      - { name: cover, label: 대표 이미지 (선택), widget: image, required: false }
+      - { name: body, label: 본문, widget: markdown }
+
+  # ───────────────────────── 공지 ─────────────────────────
+  - name: notices
+    label: 공지 · 소식
+    label_singular: 공지
+    icon: campaign
+    description: 행사 안내, 일정표, 순서지 같은 교회 소식입니다. '맨 위에 고정'을 켜면 소식 페이지 맨 위에 보입니다.
+    folder: /src/content/notices
+    preview_path: 'news/notices/{{filename}}/'
+    create: true
+    slug: '{{fields.date}}'
+    summary: '{{date}} · {{title}}'
+    sortable_fields:
+      fields: [date, title]
+      default: { field: date, direction: descending }
+    media_folder: '{{media_folder}}/notices'
+    public_folder: '{{public_folder}}/notices'
+    editor: { preview: false }
+    fields:
+      - { name: title, label: 제목, widget: string }
+      - { name: date, label: 날짜, widget: datetime, type: date, default: '{{now}}' }
+      - { name: pinned, label: 맨 위에 고정, widget: boolean, default: false }
+      - { name: images, label: 이미지 (선택), widget: image, multiple: true, required: false }
+      - { name: body, label: 내용, widget: markdown, required: false }
+
+  # ───────────────────────── 앨범 ─────────────────────────
+  - name: albums
+    label: 앨범
+    label_singular: 앨범
+    icon: photo_library
+    description: 사진 여러 장을 한 번에 끌어다 놓으세요. 휴대폰 사진(HEIC 포함)도 자동으로 줄여서 올라갑니다.
+    folder: /src/content/albums
+    preview_path: 'album/{{filename}}/'
+    create: true
+    slug: '{{fields.date}}'
+    summary: '{{date}} · {{title}}'
+    sortable_fields:
+      fields: [date, title]
+      default: { field: date, direction: descending }
+    media_folder: '{{media_folder}}/albums/{{filename}}'
+    public_folder: '{{public_folder}}/albums/{{filename}}'
+    editor: { preview: false }
+    fields:
+      - { name: title, label: 앨범 제목, widget: string, hint: '예) 2026 전교인 여름수련회' }
+      - { name: date, label: 날짜, widget: datetime, type: date, default: '{{now}}' }
+      - { name: photos, label: 사진, widget: image, multiple: true, min: 1, hint: '사진을 여러 장 한꺼번에 끌어다 놓으세요. 드래그해서 순서를 바꿀 수 있습니다.' }
+      - { name: cover, label: 표지 사진 (선택), widget: image, required: false, hint: '비워 두면 첫 번째 사진이 표지가 됩니다.' }
+      - { name: body, label: 설명 (선택), widget: markdown, required: false }
+
+  # ───────────────────────── 교회 정보 ─────────────────────────
+  - name: settings
+    label: 교회 정보
+    icon: settings
+    description: 예배 시간, 연락처, 표어, 교회 소개 글처럼 가끔 바꾸는 정보입니다.
+    editor: { preview: false }
+    files:
+      - name: site
+        label: 기본 정보 · 예배 시간 · 헌금 계좌
+        file: /src/data/site.json
+        media_folder: '{{media_folder}}/site'
+        public_folder: '{{public_folder}}/site'
+        fields:
+          - { name: name, label: 교회 이름, widget: string }
+          - { name: nameEn, label: 영문 이름, widget: string }
+          - { name: denomination, label: 교단, widget: string }
+          - { name: tagline, label: 교회 슬로건, widget: string }
+          - { name: founded, label: 창립 연도, widget: string }
+          - name: motto
+            label: 올해의 표어
+            widget: object
+            fields:
+              - { name: year, label: 연도, widget: string }
+              - { name: text, label: 표어, widget: string }
+              - { name: verse, label: 성경 구절, widget: string, hint: '예) 에베소서 2:22' }
+              - { name: full, label: 구절 전문, widget: text }
+          - { name: address, label: 주소, widget: string }
+          - { name: phone, label: 전화번호, widget: string }
+          - { name: email, label: 이메일, widget: string }
+          - name: links
+            label: 링크
+            widget: object
+            collapsed: true
+            fields:
+              - { name: youtube, label: 유튜브 채널, widget: string }
+              - { name: blog, label: 네이버 블로그, widget: string }
+              - { name: onlineChurch, label: 온라인 교회, widget: string }
+              - { name: naverMap, label: 네이버 지도 링크, widget: string }
+              - { name: kakaoMap, label: 카카오맵 링크, widget: string }
+          - name: services
+            label: 예배 시간
+            label_singular: 예배
+            widget: list
+            summary: '{{name}} — {{time}}'
+            fields:
+              - { name: name, label: 예배 이름, widget: string }
+              - { name: time, label: 시간, widget: string, hint: '예) 주일 오전 11:00' }
+              - { name: place, label: 장소, widget: string }
+          - name: giving
+            label: 헌금
+            widget: object
+            fields:
+              - { name: kakaopay, label: 카카오페이 송금 링크, widget: string, required: false }
+              - name: accounts
+                label: 헌금 계좌
+                label_singular: 계좌
+                widget: list
+                summary: '{{label}} — {{bank}} {{number}}'
+                fields:
+                  - { name: label, label: 구분, widget: string, hint: '예) 온라인 헌금' }
+                  - { name: bank, label: 은행, widget: string }
+                  - { name: number, label: 계좌번호, widget: string }
+                  - { name: holder, label: 예금주, widget: string }
+
+      - name: about
+        label: 교회 소개 · 담임목사 인사말
+        file: /src/data/about.json
+        media_folder: '{{media_folder}}/site'
+        public_folder: '{{public_folder}}/site'
+        fields:
+          - { name: intro, label: 교회 소개 (첫 문장), widget: text, hint: "‘작은따옴표’로 감싼 말은 강조 색으로 표시됩니다." }
+          - { name: denominationNote, label: 교단 소개, widget: text }
+          - name: visions
+            label: 교회 비전
+            label_singular: 비전
+            widget: list
+            summary: '{{title}}'
+            fields:
+              - { name: title, label: 제목, widget: string }
+              - { name: text, label: 설명, widget: text }
+          - name: ministries
+            label: 사역 비전
+            label_singular: 사역 비전
+            widget: list
+            summary: '{{title}}'
+            fields:
+              - { name: title, label: 제목, widget: string }
+              - { name: text, label: 설명, widget: text }
+          - name: pastor
+            label: 담임목사
+            widget: object
+            fields:
+              - { name: name, label: 이름, widget: string }
+              - { name: title, label: 직분, widget: string }
+              - { name: photo, label: 사진, widget: image }
+              - { name: bio, label: 약력, widget: list, field: { name: line, label: 약력, widget: string } }
+              - { name: greeting, label: 인사말, widget: text, hint: '문단 사이는 한 줄을 비워 주세요.' }
+              - { name: signature, label: 서명, widget: string }

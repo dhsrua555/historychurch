@@ -1,0 +1,317 @@
+---
+import Logo from './Logo.astro';
+import CrossMark from './CrossMark.astro';
+import site from '../data/site.json';
+import { href } from '../lib/utils';
+
+const nav = [
+  { label: '교회 소개', path: '/about/' },
+  { label: '예배 안내', path: '/worship/' },
+  { label: '설교', path: '/sermons/' },
+  { label: '교회 소식', path: '/news/' },
+  { label: '앨범', path: '/album/' },
+];
+
+const current = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, ''), '') || '/';
+const isActive = (p: string) => current.startsWith(p);
+---
+
+<header class="site-header" data-header>
+  <div class="container site-header__inner">
+    <nav class="site-nav" aria-label="주 메뉴">
+      <ul role="list">
+        {
+          nav.map((item) => (
+            <li>
+              <a href={href(item.path)} aria-current={isActive(item.path) ? 'page' : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <a class="site-header__logo" href={href('/')} aria-label="히스토리교회 홈">
+      <Logo tone="light" class="logo-light" />
+      <Logo tone="color" class="logo-color" />
+    </a>
+
+    <div class="site-header__actions">
+      <a class="icon-link" href={site.links.youtube} target="_blank" rel="noopener" aria-label="유튜브 채널 (새 창)">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M23 7.2a3 3 0 0 0-2.1-2.1C19 4.6 12 4.6 12 4.6s-7 0-8.9.5A3 3 0 0 0 1 7.2 31 31 0 0 0 .5 12a31 31 0 0 0 .5 4.8 3 3 0 0 0 2.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .5-4.8 31 31 0 0 0-.5-4.8ZM9.7 15.1V8.9l5.8 3.1-5.8 3.1Z"></path></svg>
+      </a>
+      <a class="btn btn--sm btn--gold header-give" href={href('/give/')}>
+        온라인 헌금
+        <span class="btn__icon"><CrossMark class="" /></span>
+      </a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-toggle>
+        <span class="sr-only">메뉴 열기</span>
+        <span class="menu-toggle__bars" aria-hidden="true"><span></span><span></span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mobile-menu" data-menu hidden>
+  <div class="container mobile-menu__inner">
+    <ul role="list" class="mobile-menu__links">
+      <li><a href={href('/')}>홈</a></li>
+      {
+        nav.map((item) => (
+          <li>
+            <a href={href(item.path)}>{item.label}</a>
+          </li>
+        ))
+      }
+      <li><a href={href('/give/')}>온라인 헌금</a></li>
+    </ul>
+    <div class="mobile-menu__foot">
+      <p>{site.address}</p>
+      <p><a href={`tel:${site.phone}`}>{site.phone}</a> · <a href={`mailto:${site.email}`}>{site.email}</a></p>
+      <p><a href={site.links.youtube} target="_blank" rel="noopener">유튜브</a> · <a href={site.links.blog} target="_blank" rel="noopener">네이버 블로그</a></p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .site-header {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 50;
+    color: var(--on-dark);
+    transition: background-color 0.45s var(--ease), color 0.45s var(--ease), box-shadow 0.45s var(--ease), transform 0.45s var(--ease);
+  }
+
+  .site-header.is-solid {
+    background: rgba(250, 248, 243, 0.9);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
+    backdrop-filter: blur(14px) saturate(1.4);
+    color: var(--ink);
+    box-shadow: 0 1px 0 var(--line);
+  }
+
+  .site-header.is-hidden {
+    transform: translateY(-100%);
+  }
+
+  .site-header__inner {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    height: var(--header-h);
+  }
+
+  .site-nav ul {
+    display: flex;
+    gap: clamp(18px, 2.2vw, 34px);
+  }
+
+  .site-nav a {
+    position: relative;
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding-block: 6px;
+  }
+
+  .site-nav a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1.5px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.45s var(--ease);
+  }
+
+  .site-nav a:hover::after,
+  .site-nav a[aria-current='page']::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  .site-header__logo {
+    display: block;
+  }
+
+  .site-header__logo :global(.logo-color) {
+    display: none;
+  }
+
+  .site-header.is-solid .site-header__logo :global(.logo-light) {
+    display: none;
+  }
+
+  .site-header.is-solid .site-header__logo :global(.logo-color) {
+    display: inline-flex;
+  }
+
+  .site-header__actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 18px;
+  }
+
+  .icon-link {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    opacity: 0.85;
+    transition: opacity 0.3s;
+  }
+
+  .icon-link:hover {
+    opacity: 1;
+  }
+
+  .menu-toggle {
+    display: none;
+    width: 46px;
+    height: 46px;
+    border-radius: 999px;
+    box-shadow: inset 0 0 0 1px currentColor;
+    place-items: center;
+  }
+
+  .menu-toggle__bars {
+    display: grid;
+    gap: 6px;
+    width: 18px;
+  }
+
+  .menu-toggle__bars span {
+    display: block;
+    height: 1.6px;
+    background: currentColor;
+    transition: transform 0.4s var(--ease);
+  }
+
+  :global(html.menu-open) .menu-toggle__bars span:first-child {
+    transform: translateY(3.8px) rotate(45deg);
+  }
+
+  :global(html.menu-open) .menu-toggle__bars span:last-child {
+    transform: translateY(-3.8px) rotate(-45deg);
+  }
+
+  @media (max-width: 1080px) {
+    .site-header__inner {
+      grid-template-columns: auto 1fr;
+    }
+
+    .site-nav,
+    .icon-link {
+      display: none;
+    }
+
+    .site-header__logo {
+      order: -1;
+    }
+
+    .menu-toggle {
+      display: grid;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .header-give {
+      display: none;
+    }
+  }
+
+  /* 모바일 메뉴 */
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background: var(--green-950);
+    color: var(--on-dark);
+    padding-top: calc(var(--header-h) + 24px);
+    overflow-y: auto;
+    animation: menu-in 0.5s var(--ease);
+  }
+
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  .mobile-menu__inner {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: calc(100svh - var(--header-h) - 48px);
+    gap: 48px;
+  }
+
+  .mobile-menu__links a {
+    display: block;
+    padding-block: 10px;
+    font-size: clamp(2rem, 8vw, 3rem);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1.2;
+    border-bottom: 1px solid var(--line-dark);
+  }
+
+  .mobile-menu__foot {
+    display: grid;
+    gap: 4px;
+    color: var(--on-dark-2);
+    font-size: 0.95rem;
+    padding-bottom: 24px;
+  }
+
+  :global(html.menu-open) {
+    overflow: hidden;
+  }
+
+  :global(html.menu-open) .site-header {
+    background: transparent;
+    box-shadow: none;
+    color: var(--on-dark);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  :global(html.menu-open) .site-header__logo :global(.logo-light) {
+    display: inline-flex;
+  }
+
+  :global(html.menu-open) .site-header__logo :global(.logo-color) {
+    display: none;
+  }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]')!;
+  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]')!;
+  const menu = document.querySelector<HTMLElement>('[data-menu]')!;
+
+  // 스크롤하면 헤더 배경이 생기고, 아래로 내릴 때는 잠시 숨습니다.
+  let lastY = window.scrollY;
+  const onScroll = () => {
+    const y = window.scrollY;
+    header.classList.toggle('is-solid', y > 40);
+    header.classList.toggle('is-hidden', y > 400 && y > lastY && !document.documentElement.classList.contains('menu-open'));
+    lastY = y;
+  };
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  const setMenu = (open: boolean) => {
+    menu.hidden = !open;
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.querySelector('.sr-only')!.textContent = open ? '메뉴 닫기' : '메뉴 열기';
+    document.documentElement.classList.toggle('menu-open', open);
+  };
+  toggle.addEventListener('click', () => setMenu(menu.hidden));
+  document.addEventListener('keydown', (e) => e.key === 'Escape' && !menu.hidden && setMenu(false));
+</script>

@@ -1,0 +1,38 @@
+{
+  "name": "히스토리교회",
+  "nameEn": "History Church",
+  "denomination": "기독교대한감리회",
+  "tagline": "말씀의 역사로 믿음의 역사를 쓰는 교회",
+  "founded": "2020",
+  "motto": {
+    "year": "2026",
+    "text": "함께 지어져 가느니라",
+    "verse": "에베소서 2:22",
+    "full": "너희도 성령 안에서 하나님이 거하실 처소가 되기 위하여 그리스도 예수 안에서 함께 지어져 가느니라"
+  },
+  "address": "경기도 성남시 분당구 매화로 40, 동륜빌딩 5층",
+  "phone": "010-3030-1009",
+  "email": "soul0691@daum.net",
+  "links": {
+    "youtube": "https://www.youtube.com/channel/UCJfngn5W15Iitdv4mTv0aTg",
+    "blog": "https://blog.naver.com/soul1150",
+    "onlineChurch": "https://history.online.church",
+    "naverMap": "https://map.naver.com/p/search/%EC%84%B1%EB%82%A8%EC%8B%9C%20%EB%B6%84%EB%8B%B9%EA%B5%AC%20%EB%A7%A4%ED%99%94%EB%A1%9C%2040",
+    "kakaoMap": "https://map.kakao.com/?q=%EC%84%B1%EB%82%A8%EC%8B%9C%20%EB%B6%84%EB%8B%B9%EA%B5%AC%20%EB%A7%A4%ED%99%94%EB%A1%9C%2040"
+  },
+  "services": [
+    { "name": "주일예배 1부", "time": "주일 오전 8:30", "place": "본당" },
+    { "name": "주일예배 2부", "time": "주일 오전 11:00", "place": "본당" },
+    { "name": "교회학교 예배", "time": "주일 오전 10:30", "place": "교육관" },
+    { "name": "수요 히스토리 예배", "time": "수요일 저녁 8:00", "place": "본당" },
+    { "name": "금요 미라클 기도회", "time": "금요일 저녁 8:00", "place": "본당" },
+    { "name": "새벽 기도회", "time": "월–금 오전 6:00", "place": "본당" }
+  ],
+  "giving": {
+    "kakaopay": "https://qr.kakaopay.com/281006011114365580003325",
+    "accounts": [
+      { "label": "온라인 헌금", "bank": "NH농협은행", "number": "010-3030-1009-29", "holder": "히스토리교회" },
+      { "label": "성전이전 · 선교헌금", "bank": "새마을금고", "number": "9002-2067-2011-9", "holder": "히스토리교회" }
+    ]
+  }
+}

@@ -1,0 +1,270 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import CrossMark from '../../components/CrossMark.astro';
+import { byDateDesc, excerpt, href, longDate } from '../../lib/utils';
+
+export async function getStaticPaths() {
+  const albums = (await getCollection('albums')).sort(byDateDesc);
+  return albums.map((album, i) => ({ params: { id: album.id }, props: { album, newer: albums[i - 1], older: albums[i + 1] } }));
+}
+
+const { album, newer, older } = Astro.props;
+const { title, date, photos, cover } = album.data;
+const { Content } = await render(album);
+const hasBody = Boolean(album.body?.trim());
+---
+
+<Base title={title} description={excerpt(album.body, 140) || `${title} — 히스토리교회 앨범`} image={cover || photos[0]}>
+  <section class="album-hero dark">
+    <div class="container">
+      <a class="back" href={href('/album/')}>← 앨범 목록</a>
+      <p class="label"><CrossMark /> 교회 앨범 · 사진 {photos.length}장</p>
+      <h1 class="h1">{title}</h1>
+      <p class="muted album-hero__date">{longDate(date)}</p>
+    </div>
+  </section>
+
+  <section class="section--tight paper">
+    <div class="container">
+      {
+        hasBody && (
+          <div class="prose album-text">
+            <Content />
+          </div>
+        )
+      }
+
+      <ul role="list" class="photo-grid">
+        {
+          photos.map((src, i) => (
+            <li>
+              <button type="button" class="photo" data-index={i} aria-label={`${i + 1}번째 사진 크게 보기`}>
+                <img src={href(src)} alt={`${title} 사진 ${i + 1}`} loading={i < 6 ? 'eager' : 'lazy'} decoding="async" />
+              </button>
+            </li>
+          ))
+        }
+      </ul>
+
+      <nav class="pager" aria-label="다른 앨범">
+        {
+          newer ? (
+            <a href={href(`/album/${newer.id}/`)}>
+              <span class="muted">← 최근 앨범</span>
+              <strong>{newer.data.title}</strong>
+            </a>
+          ) : (
+            <span />
+          )
+        }
+        {
+          older && (
+            <a href={href(`/album/${older.id}/`)} class="pager__older">
+              <span class="muted">이전 앨범 →</span>
+              <strong>{older.data.title}</strong>
+            </a>
+          )
+        }
+      </nav>
+    </div>
+  </section>
+
+  <!-- 사진 크게 보기 -->
+  <dialog class="lightbox" data-lightbox aria-label="사진 크게 보기">
+    <img alt="" data-lightbox-img />
+    <p class="lightbox__count num" data-lightbox-count></p>
+    <button type="button" class="lightbox__btn lightbox__close" data-close aria-label="닫기">✕</button>
+    <button type="button" class="lightbox__btn lightbox__prev" data-prev aria-label="이전 사진">‹</button>
+    <button type="button" class="lightbox__btn lightbox__next" data-next aria-label="다음 사진">›</button>
+  </dialog>
+</Base>
+
+<style>
+  .album-hero {
+    padding-top: calc(var(--header-h) + clamp(48px, 7vw, 100px));
+    padding-bottom: clamp(40px, 5vw, 72px);
+  }
+
+  .back {
+    display: inline-block;
+    margin-bottom: 36px;
+    color: var(--on-dark-2);
+    font-size: 0.93rem;
+  }
+
+  .back:hover {
+    color: var(--gold-soft);
+  }
+
+  .album-hero .label {
+    margin-bottom: 18px;
+  }
+
+  .album-hero__date {
+    margin-top: 14px;
+  }
+
+  .album-text {
+    max-width: 760px;
+    margin-bottom: 48px;
+  }
+
+  .photo-grid {
+    columns: 3 280px;
+    column-gap: 14px;
+  }
+
+  .photo-grid li {
+    break-inside: avoid;
+    margin-bottom: 14px;
+  }
+
+  .photo {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 14px;
+    background: var(--cream);
+    cursor: zoom-in;
+  }
+
+  .photo img {
+    width: 100%;
+    transition: transform 1s var(--ease);
+  }
+
+  .photo:hover img {
+    transform: scale(1.03);
+  }
+
+  .pager {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 72px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .pager a {
+    display: grid;
+    gap: 4px;
+  }
+
+  .pager__older {
+    text-align: right;
+  }
+
+  .lightbox {
+    width: 100vw;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: rgba(12, 20, 18, 0.96);
+    color: var(--on-dark);
+  }
+
+  .lightbox[open] {
+    display: grid;
+    place-items: center;
+  }
+
+  .lightbox::backdrop {
+    background: transparent;
+  }
+
+  .lightbox img {
+    max-width: min(94vw, 1600px);
+    max-height: 86dvh;
+    object-fit: contain;
+    border-radius: 8px;
+    user-select: none;
+  }
+
+  .lightbox__count {
+    position: absolute;
+    left: 50%;
+    bottom: 20px;
+    transform: translateX(-50%);
+    font-size: 0.9rem;
+    color: var(--on-dark-2);
+  }
+
+  .lightbox__btn {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 999px;
+    background: rgba(244, 240, 230, 0.1);
+    font-size: 1.6rem;
+    line-height: 1;
+    transition: background-color 0.3s;
+  }
+
+  .lightbox__btn:hover {
+    background: rgba(244, 240, 230, 0.2);
+  }
+
+  .lightbox__close {
+    top: 18px;
+    right: 18px;
+    font-size: 1.1rem;
+  }
+
+  .lightbox__prev {
+    left: 18px;
+    top: 50%;
+    margin-top: -26px;
+  }
+
+  .lightbox__next {
+    right: 18px;
+    top: 50%;
+    margin-top: -26px;
+  }
+</style>
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('[data-lightbox]')!;
+  const img = dialog.querySelector<HTMLImageElement>('[data-lightbox-img]')!;
+  const count = dialog.querySelector<HTMLElement>('[data-lightbox-count]')!;
+  const photos = [...document.querySelectorAll<HTMLButtonElement>('.photo')];
+  let index = 0;
+
+  const show = (i: number) => {
+    index = (i + photos.length) % photos.length;
+    const source = photos[index].querySelector('img')!;
+    img.src = source.currentSrc || source.src;
+    img.alt = source.alt;
+    count.textContent = `${index + 1} / ${photos.length}`;
+  };
+
+  photos.forEach((p, i) =>
+    p.addEventListener('click', () => {
+      show(i);
+      dialog.showModal();
+    }),
+  );
+  dialog.querySelector('[data-close]')!.addEventListener('click', () => dialog.close());
+  dialog.querySelector('[data-prev]')!.addEventListener('click', () => show(index - 1));
+  dialog.querySelector('[data-next]')!.addEventListener('click', () => show(index + 1));
+  dialog.addEventListener('click', (e) => e.target === dialog && dialog.close());
+  dialog.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') show(index - 1);
+    if (e.key === 'ArrowRight') show(index + 1);
+  });
+
+  // 휴대폰에서 옆으로 밀어서 넘기기
+  let startX = 0;
+  dialog.addEventListener('touchstart', (e) => (startX = e.touches[0].clientX), { passive: true });
+  dialog.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) > 50) show(index + (dx < 0 ? 1 : -1));
+  });
+</script>
