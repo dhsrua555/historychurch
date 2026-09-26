@@ -7,11 +7,11 @@
 app_title: 히스토리교회 관리자
 logo:
   src: ../images/logo.svg
-site_url: https://dhsrua555.github.io/historychurch/
+site_url: https://history-church.github.io/historychurch/
 
 backend:
   name: github
-  repo: dhsrua555/historychurch
+  repo: History-ChurcH/historychurch
   branch: main
   # 지금은 'GitHub 토큰으로 로그인'만 켜 두었습니다.
   # 'GitHub로 로그인' 버튼을 쓰려면 README 의 "관리자 로그인 설정"을 따라 base_url 을 넣고 oauth 를 추가하세요.

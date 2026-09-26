@@ -1,7 +1,7 @@
 # 히스토리교회 홈페이지 (리뉴얼)
 
 기독교대한감리회 히스토리교회 — 말씀의 역사로 믿음의 역사를 쓰는 교회
-기존 사이트: https://historychurch.org · 새 사이트 미리보기: https://dhsrua555.github.io/historychurch/
+기존 사이트: https://historychurch.org · 새 사이트 미리보기: https://history-church.github.io/historychurch/
 
 > 글·사진을 올리는 분은 **[운영가이드.md](./운영가이드.md)** 만 보시면 됩니다.
 > 이 문서는 사이트를 관리·설정하는 분을 위한 안내입니다.
@@ -77,7 +77,7 @@ scripts/
    ```yaml
    backend:
      name: github
-     repo: dhsrua555/historychurch
+     repo: History-ChurcH/historychurch
      branch: main
      base_url: https://<워커 주소>
      auth_methods: [oauth, token]
@@ -86,7 +86,7 @@ scripts/
 ## 오류 제보함
 
 - 홈페이지 맨 아래 **오류 제보** → `/report/` 양식. 제보자는 로그인할 필요가 없습니다.
-- 제보는 **비공개 저장소** [historychurch-reports](https://github.com/dhsrua555/historychurch-reports) 의 이슈로 들어옵니다.
+- 제보는 **비공개 저장소** [historychurch-reports](https://github.com/History-ChurcH/historychurch-reports) 의 이슈로 들어옵니다.
   (공개 저장소가 아니라서 제보자의 연락처는 관리자만 볼 수 있습니다.) 저장소 주인은 새 제보가 올 때마다 GitHub 알림 메일을 받습니다.
 - 처리가 끝나면 이슈를 **Close** 하면 됩니다. 유형별 라벨(화면이 이상해요 / 내용이 틀려요 / 영상·링크가 안 돼요 / 기타)로 걸러 볼 수 있습니다.
 - 동작 방식: 양식 → Cloudflare Worker(`workers/report`) → GitHub 이슈. 스팸 방지로 숨은 입력칸, 3초 미만 제출 차단, IP 당 1분 5건 제한, 허용된 사이트 주소에서 온 요청만 받습니다.
@@ -129,7 +129,7 @@ scripts/
 2. **도메인 연결** — Settings → Pages → Custom domain 에 `historychurch.org` 입력.
    도메인 관리 업체(DNS)에서 `A` 레코드 4개를 GitHub Pages 주소로 바꿉니다:
    `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`
-   (`www` 는 `CNAME` → `dhsrua555.github.io`). 연결 후 **Enforce HTTPS** 를 켭니다.
+   (`www` 는 `CNAME` → `history-church.github.io`). 연결 후 **Enforce HTTPS** 를 켭니다.
 3. `public/admin/config.yml` 의 `site_url` 을 `https://historychurch.org/` 로 바꿉니다.
 4. 나머지는 자동입니다. 빌드가 새 주소를 알아서 쓰고, 미리보기에서 막아 두었던 검색엔진 노출(`noindex`)도 풀립니다.
    예전 주소 `/greeting`, `/maps`, `/sermon`, `/history` 는 새 페이지로 자동 이동합니다 (`astro.config.mjs` 의 `redirects`).
