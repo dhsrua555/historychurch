@@ -1,0 +1,15 @@
+// Cloudflare Workers 배포 설정 (Workers & Pages → Create → Import a repository)
+// 빌드: npm run build  →  배포: npx wrangler deploy
+// 실행되는 코드 없이 dist/ 의 정적 파일만 올리는 구성이라, 정적 파일 요청은 무료·무제한입니다.
+// 도메인(historychurch.org, www)은 대시보드의 Settings → Domains & Routes 에서 붙입니다.
+{
+  "$schema": "https://unpkg.com/wrangler/config-schema.json",
+  "name": "historychurch",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  },
+  "workers_dev": true
+}
