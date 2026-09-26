@@ -7,7 +7,7 @@
 app_title: 히스토리교회 관리자
 logo:
   src: ../images/logo.svg
-site_url: https://history-church.github.io/historychurch/
+site_url: https://historychurch.org/
 
 backend:
   name: github

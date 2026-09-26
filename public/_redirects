@@ -1,0 +1,14 @@
+# Cloudflare Pages 리다이렉트 (다른 호스팅에서는 astro.config.mjs 의 redirects 가 같은 일을 합니다)
+
+# 예전 워드프레스 주소 → 새 주소
+/greeting    /about/#greeting     301
+/greeting/   /about/#greeting     301
+/maps        /worship/#location   301
+/maps/       /worship/#location   301
+/sermon      /sermons/            301
+/sermon/     /sermons/            301
+/history     /news/               301
+/history/    /news/               301
+
+# www → 대표 주소
+https://www.historychurch.org/*   https://historychurch.org/:splat   301
